@@ -1,0 +1,11 @@
+version: "3"
+services:
+  csgo:
+    build: .
+    entrypoint: /entry.sh
+    ports:
+     - "5000:5000"
+    volumes:
+     - ./csgo_data:/home/steam/csgo-dedicated
+    environment:
+     - SRCDS_TOKEN=
