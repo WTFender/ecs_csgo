@@ -1,60 +1,65 @@
 {
-    "family": "csgo-dedicated",
-    "networkMode": "awsvpc",
-    "containerDefinitions": [
-        {
-            "name": "csgo-dedicated-sm",
-            "image": "cm2network/csgo:sourcemod",
-            "entryPoint": [
-                "bash",
-                "entry.sh"
-            ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "csgo-dedicated",
-                    "awslogs-region": "us-west-2",
-                    "awslogs-stream-prefix": "csgo-sm"
-                }
-            },
-            "mountPoints": [
-                {
-                    "sourceVolume": "gameData",
-                    "containerPath": "/home/steam/csgo-dedicated"
-                }
-            ],
-            "secrets": [
-                {
-                    "name": "SRCDS_TOKEN",
-                    "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_token"
-                },
-                {
-                    "name": "SRCDS_PW",
-                    "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_pw"
-                },
-                {
-                    "name": "SRCDS_RCONPW",
-                    "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_rcon"
-                }
-            ]
+  "family": "csgo-dedicated",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "csgo-dedicated-sm",
+      "image": "cm2network/csgo:sourcemod",
+      "entryPoint": ["bash", "entry.sh"],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "csgo-dedicated",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "csgo-sm"
         }
-    ],
-    "volumes": [
+      },
+      "portMappings": [
         {
-            "name": "gameData",
-            "efsVolumeConfiguration": {
-                "fileSystemId": "fs-5d527658",
-                "transitEncryption": "ENABLED",
-                "authorizationConfig": {
-                    "accessPointId": "fsap-024c1ecb0c5a76fe7",
-                    "iam": "ENABLED"
-                }
-            }
+          "containerPort": 27015,
+          "protocol": "tcp"
+        },
+        {
+            "containerPort": 27015,
+            "protocol": "udp"
+          }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "gameData",
+          "containerPath": "/home/steam/csgo-dedicated"
         }
-    ],
-    "requiresCompatibilities": [
-        "FARGATE"
-    ], 
-    "cpu": "1024", 
-    "memory": "2048"
+      ],
+      "secrets": [
+        {
+          "name": "SRCDS_TOKEN",
+          "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_token"
+        },
+        {
+          "name": "SRCDS_PW",
+          "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_pw"
+        },
+        {
+          "name": "SRCDS_RCONPW",
+          "valueFrom": "arn:aws:ssm:us-west-2:391785637824:parameter/csgo/prod/srcds_rcon"
+        }
+      ]
+    }
+  ],
+  "volumes": [
+    {
+      "name": "gameData",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "fs-5d527658",
+        "transitEncryption": "ENABLED",
+        "authorizationConfig": {
+          "accessPointId": "fsap-024c1ecb0c5a76fe7",
+          "iam": "ENABLED"
+        }
+      }
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048"
 }
